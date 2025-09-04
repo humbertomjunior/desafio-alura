@@ -57,4 +57,9 @@ public class Task {
         option.setTask(this);
     }
 
+    public Task increaseOrder() {
+        this.order++;
+        return this;
+    }
+
 }

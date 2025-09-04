@@ -74,4 +74,8 @@ public class Course {
     public LocalDateTime getPublishedAt() {
         return publishedAt;
     }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
 }

@@ -1,6 +1,7 @@
 package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
+import br.com.alura.AluraFake.course.CourseAndTasksStatementsListItem;
 import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.course.Status;
 import br.com.alura.AluraFake.task.request.MultipleChoiceTask;
@@ -13,6 +14,10 @@ import br.com.alura.AluraFake.util.DuplicateStatementException;
 import br.com.alura.AluraFake.util.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -37,7 +42,7 @@ public class TaskService {
 
         final var task = this.buildTask(course, requestTask, type);
 
-        final var savedTask = this.taskRepository.save(task);
+        final var savedTask = this.saveTask(task, course.getTasks());
 
         return this.buildCreatedTask(savedTask);
 
@@ -85,7 +90,7 @@ public class TaskService {
     private CreateTaskResponse buildCreatedTask(Task task) {
         if (!task.getType().equals(TaskType.OPEN_TEXT))
             return this.buildCreatedChoiceTask(task);
-        
+
         return CreateTaskResponse.builder()
                 .statement(task.getStatement())
                 .order(task.getOrder())
@@ -95,11 +100,29 @@ public class TaskService {
     }
 
     private boolean statementAlreadyExtists(SampleTask requestTask, Course course) {
-
         final var tasksStatements = taskRepository.findTasksStatementsByCourseId(course.getId());
 
         return tasksStatements.stream().anyMatch(statement -> statement.equals(requestTask.getStatement()));
-
     }
 
+    private Task saveTask(Task requestTask, List<Task> otherTasksFromCourse) {
+
+        if (otherTasksFromCourse.isEmpty())
+            return taskRepository.save(requestTask);
+
+        final var repeatedOrder = otherTasksFromCourse.stream()
+                .flatMap(task -> Optional.ofNullable(task.getOrder()).stream())
+                .anyMatch(order -> order.equals(requestTask.getOrder()));
+
+        if (!repeatedOrder)
+            return taskRepository.save(requestTask);
+
+        final var changedTasks = otherTasksFromCourse.stream()
+                .filter(task -> task.getOrder() >= requestTask.getOrder())
+                .map(Task::increaseOrder)
+                .toList();
+        final var savedTask = taskRepository.save(requestTask);
+        taskRepository.saveAll(changedTasks);
+        return savedTask;
+    }
 }

@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
@@ -16,8 +17,8 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT new br.com.alura.AluraFake.course.CourseAndTasksStatementsListItem(c, t) " +
             "FROM Course c " +
-            "JOIN FETCH c.tasks t " +
+            "LEFT JOIN FETCH c.tasks t " +
             "WHERE c.id = :courseId")
-    List<CourseAndTasksStatementsListItem> findCoursesAndTasksStatementsByCourseId(Long courseId);
+    Optional<CourseAndTasksStatementsListItem> findCoursesAndTasksStatementsByCourseId(Long courseId);
 
 }
