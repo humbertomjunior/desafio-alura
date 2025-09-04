@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreatedTask {
+public class CreateTaskResponse {
 
     private Long courseId;
     private String statement;

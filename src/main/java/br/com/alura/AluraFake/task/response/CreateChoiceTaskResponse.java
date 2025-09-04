@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class CreatedChoiceTask extends CreatedTask {
+public class CreateChoiceTaskResponse extends CreateTaskResponse {
 
     private List<Option> options;
 

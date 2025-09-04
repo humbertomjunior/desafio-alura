@@ -1,6 +1,7 @@
 package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +35,9 @@ public class Task {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "task")
     private List<Option> options;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    @JsonIgnore
     private Course course;
 
     @Builder

@@ -18,4 +18,18 @@ public class ValidationExceptionHandler {
         List<ErrorItemDTO> errors = ex.getBindingResult().getFieldErrors().stream().map(ErrorItemDTO::new).toList();
         return ResponseEntity.badRequest().body(errors);
     }
+
+    @ExceptionHandler(InvalidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorItemDTO> handleInvalidFieldOrObject(InvalidException ex) {
+        final var erro = new ErrorItemDTO(ex.getField(), ex.getMessage());
+        return ResponseEntity.badRequest().body(erro);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorDTO> handleNotFoundFieldOrObject(NotFoundException ex) {
+        final var erro = new ErrorDTO(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+    }
 }

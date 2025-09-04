@@ -1,5 +1,7 @@
 package br.com.alura.AluraFake.user;
 
+import br.com.alura.AluraFake.course.CourseService;
+import br.com.alura.AluraFake.course.CourseAndTaskListItem;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.*;
@@ -12,9 +14,11 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final CourseService courseService;
 
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, CourseService courseService) {
         this.userRepository = userRepository;
+        this.courseService = courseService;
     }
 
     @Transactional
@@ -32,6 +36,11 @@ public class UserController {
     @GetMapping("/user/all")
     public List<UserListItemDTO> listAllUsers() {
         return userRepository.findAll().stream().map(UserListItemDTO::new).toList();
+    }
+
+    @GetMapping("/instructor/{id}/courses")
+    public ResponseEntity<List<CourseAndTaskListItem>> getCoursesByInstructorId(@PathVariable("id") Long instructorId) {
+        return ResponseEntity.ok(this.courseService.getCoursesByInstructorId(instructorId));
     }
 
 }

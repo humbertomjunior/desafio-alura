@@ -7,8 +7,10 @@ import br.com.alura.AluraFake.task.request.MultipleChoiceTask;
 import br.com.alura.AluraFake.task.request.SampleOptionsTask;
 import br.com.alura.AluraFake.task.request.SampleTask;
 import br.com.alura.AluraFake.task.request.SingleChoiceTask;
-import br.com.alura.AluraFake.task.response.CreatedChoiceTask;
-import br.com.alura.AluraFake.task.response.CreatedTask;
+import br.com.alura.AluraFake.task.response.CreateChoiceTaskResponse;
+import br.com.alura.AluraFake.task.response.CreateTaskResponse;
+import br.com.alura.AluraFake.util.DuplicateStatementException;
+import br.com.alura.AluraFake.util.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,17 +26,20 @@ public class TaskService {
         this.courseRepository = courseRepository;
     }
 
-    public CreatedTask createNewTask(SampleTask requestTask, TaskType type) {
+    public CreateTaskResponse createNewTask(SampleTask requestTask, TaskType type) {
 
         final var course = this.courseRepository.findById(requestTask.getCourseId())
                 .filter(foundCourse -> foundCourse.getStatus().equals(Status.BUILDING))
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new NotFoundException("Não foi encontrado um curso com status BUILDING e id: %s".formatted(requestTask.getCourseId())));
+
+        if (this.statementAlreadyExtists(requestTask, course))
+            throw new DuplicateStatementException("O curso não pode ter duas questões com o mesmo enunciado.", "statement");
 
         final var task = this.buildTask(course, requestTask, type);
 
-        final var createdTask = this.taskRepository.save(task);
+        final var savedTask = this.taskRepository.save(task);
 
-        return this.buildCreatedTask(createdTask);
+        return this.buildCreatedTask(savedTask);
 
     }
 
@@ -46,7 +51,10 @@ public class TaskService {
                 .type(type)
                 .build();
 
-        optionsTask.getOptions().forEach(task::addOption);
+        optionsTask.getOptions()
+                .stream()
+                .map(optionRequest -> Option.builder().option(optionRequest.getOption()).isCorrect(optionRequest.isCorrect()).build())
+                .forEach(task::addOption);
 
         return task;
     }
@@ -64,8 +72,8 @@ public class TaskService {
                 .build();
     }
 
-    private CreatedChoiceTask buildCreatedChoiceTask(Task task) {
-        return CreatedChoiceTask.builder()
+    private CreateChoiceTaskResponse buildCreatedChoiceTask(Task task) {
+        return CreateChoiceTaskResponse.builder()
                 .statement(task.getStatement())
                 .order(task.getOrder())
                 .courseId(task.getCourse().getId())
@@ -74,16 +82,24 @@ public class TaskService {
                 .build();
     }
 
-    private CreatedTask buildCreatedTask(Task task) {
+    private CreateTaskResponse buildCreatedTask(Task task) {
         if (!task.getType().equals(TaskType.OPEN_TEXT))
             return this.buildCreatedChoiceTask(task);
         
-        return CreatedTask.builder()
+        return CreateTaskResponse.builder()
                 .statement(task.getStatement())
                 .order(task.getOrder())
                 .courseId(task.getCourse().getId())
                 .type(task.getType())
                 .build();
+    }
+
+    private boolean statementAlreadyExtists(SampleTask requestTask, Course course) {
+
+        final var tasksStatements = taskRepository.findTasksStatementsByCourseId(course.getId());
+
+        return tasksStatements.stream().anyMatch(statement -> statement.equals(requestTask.getStatement()));
+
     }
 
 }
