@@ -1,7 +1,9 @@
 package br.com.alura.AluraFake.task;
 
-public enum Type {
-    OPEN_TEXT,
+public enum TaskType {
+
     MULTIPLE_CHOICE,
-    SINGLE_CHOICE;
+    SINGLE_CHOICE,
+    OPEN_TEXT
+
 }

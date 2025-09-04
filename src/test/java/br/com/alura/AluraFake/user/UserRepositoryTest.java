@@ -17,7 +17,7 @@ class UserRepositoryTest {
     private UserRepository userRepository;
 
     @Test
-    void findByEmail__should_return_existis_user() {
+    void findByEmail__should_return_exists_user() {
         User caio = new User("Caio", "caio@alura.com.br", Role.STUDENT);
         userRepository.save(caio);
 
@@ -30,7 +30,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    void existsByEmail__should_return_true_when_user_existis() {
+    void existsByEmail__should_return_true_when_user_exists() {
         User caio = new User("Caio", "caio@alura.com.br", Role.STUDENT);
         userRepository.save(caio);
 
