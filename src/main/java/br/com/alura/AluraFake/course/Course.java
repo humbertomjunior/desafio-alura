@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Entity
 public class Course {
@@ -36,6 +37,18 @@ public class Course {
         this.instructor = instructor;
         this.description = description;
         this.status = Status.BUILDING;
+    }
+
+    public boolean areTasksOrdersSequenced() {
+        final var sortedOrders = this.tasks.stream().map(Task::getOrder).sorted().toList();
+
+        if (!sortedOrders.get(0).equals(1))
+            return false;
+
+        IntStream.range(0, sortedOrders.size()-1).allMatch(i -> sortedOrders.get(i).equals(sortedOrders.get(i+1)-1));
+
+        return IntStream.range(0, this.tasks.size() - 1)
+                .allMatch(i -> sortedOrders.get(i).equals(i + 1));
     }
 
     public Long getId() {

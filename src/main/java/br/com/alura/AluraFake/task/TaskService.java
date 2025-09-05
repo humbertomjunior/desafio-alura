@@ -1,7 +1,6 @@
 package br.com.alura.AluraFake.task;
 
 import br.com.alura.AluraFake.course.Course;
-import br.com.alura.AluraFake.course.CourseAndTasksStatementsListItem;
 import br.com.alura.AluraFake.course.CourseRepository;
 import br.com.alura.AluraFake.course.Status;
 import br.com.alura.AluraFake.task.request.MultipleChoiceTask;
@@ -12,12 +11,12 @@ import br.com.alura.AluraFake.task.response.CreateChoiceTaskResponse;
 import br.com.alura.AluraFake.task.response.CreateTaskResponse;
 import br.com.alura.AluraFake.util.DuplicateStatementException;
 import br.com.alura.AluraFake.util.NotFoundException;
+import br.com.alura.AluraFake.util.TaskOrderOutOfSequenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -37,8 +36,11 @@ public class TaskService {
                 .filter(foundCourse -> foundCourse.getStatus().equals(Status.BUILDING))
                 .orElseThrow(() -> new NotFoundException("Não foi encontrado um curso com status BUILDING e id: %s".formatted(requestTask.getCourseId())));
 
-        if (this.statementAlreadyExtists(requestTask, course))
+        if (this.statementAlreadyExists(requestTask, course))
             throw new DuplicateStatementException("O curso não pode ter duas questões com o mesmo enunciado.", "statement");
+
+        if (!isOrderValid(requestTask.getOrder(), course.getTasks()))
+            throw new TaskOrderOutOfSequenceException("A order da atividade não pode ser adicionada pois deixará espaço(s) vazio(s).", "task.order");
 
         final var task = this.buildTask(course, requestTask, type);
 
@@ -99,10 +101,15 @@ public class TaskService {
                 .build();
     }
 
-    private boolean statementAlreadyExtists(SampleTask requestTask, Course course) {
+    private boolean statementAlreadyExists(SampleTask requestTask, Course course) {
         final var tasksStatements = taskRepository.findTasksStatementsByCourseId(course.getId());
 
         return tasksStatements.stream().anyMatch(statement -> statement.equals(requestTask.getStatement()));
+    }
+
+    private boolean isOrderValid(Integer order, List<Task> otherTasksFromCourse) {
+        final var orderedOrders = otherTasksFromCourse.stream().map(Task::getOrder).sorted().toList();
+        return(order < orderedOrders.get(orderedOrders.size() - 1));
     }
 
     private Task saveTask(Task requestTask, List<Task> otherTasksFromCourse) {
