@@ -10,7 +10,7 @@ import java.util.List;
 @SuperBuilder
 @Getter
 @AllArgsConstructor
-@NoStatementAsOption(message = "AAAAAAAAAAAAAAAAAAAAa")
+@NoStatementAsOption
 public abstract class SampleOptionsTask extends SampleTask {
 
     public abstract List<OptionRequest> getOptions();

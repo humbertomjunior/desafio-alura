@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class CreateTaskResponse {
 
+    private Long id;
     private Long courseId;
     private String statement;
     private Integer order;

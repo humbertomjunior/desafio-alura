@@ -1,6 +1,7 @@
 package br.com.alura.AluraFake.course;
 
 import br.com.alura.AluraFake.user.*;
+import br.com.alura.AluraFake.util.exception.CourseTasksOrdersNotInSequenceException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ class CourseControllerTest {
     private CourseRepository courseRepository;
     @Autowired
     private ObjectMapper objectMapper;
+    @MockBean
+    private CourseService courseService;
 
     @Test
     void newCourseDTO__should_return_bad_request_when_email_is_invalid() throws Exception {
@@ -110,5 +113,19 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$[2].title").value("Spring"))
                 .andExpect(jsonPath("$[2].description").value("Curso de spring"));
     }
+
+    @Test
+    void publishCourse__should_throw_error() throws Exception {
+        Long courseId = 1L;
+
+        doThrow(new CourseTasksOrdersNotInSequenceException("As atividades do curso selecionado não possuem uma sequência.", "task.order")).when(courseService).publishCourse(courseId);
+
+        mockMvc.perform(post("/course/%s/publish".formatted(courseId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.message").value("As atividades do curso selecionado não possuem uma sequência."))
+                .andExpect(jsonPath("$.field").value("task.order"))
+                .andExpect(status().isBadRequest());
+    }
+
 
 }

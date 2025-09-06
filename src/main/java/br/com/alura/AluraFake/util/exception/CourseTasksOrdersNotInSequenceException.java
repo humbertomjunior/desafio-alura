@@ -1,4 +1,4 @@
-package br.com.alura.AluraFake.util;
+package br.com.alura.AluraFake.util.exception;
 
 public class CourseTasksOrdersNotInSequenceException extends InvalidException {
 

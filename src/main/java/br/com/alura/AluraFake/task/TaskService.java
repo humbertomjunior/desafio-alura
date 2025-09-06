@@ -9,9 +9,9 @@ import br.com.alura.AluraFake.task.request.SampleTask;
 import br.com.alura.AluraFake.task.request.SingleChoiceTask;
 import br.com.alura.AluraFake.task.response.CreateChoiceTaskResponse;
 import br.com.alura.AluraFake.task.response.CreateTaskResponse;
-import br.com.alura.AluraFake.util.DuplicateStatementException;
-import br.com.alura.AluraFake.util.NotFoundException;
-import br.com.alura.AluraFake.util.TaskOrderOutOfSequenceException;
+import br.com.alura.AluraFake.util.exception.DuplicateStatementException;
+import br.com.alura.AluraFake.util.exception.NotFoundException;
+import br.com.alura.AluraFake.util.exception.TaskOrderOutOfSequenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,6 +81,7 @@ public class TaskService {
 
     private CreateChoiceTaskResponse buildCreatedChoiceTask(Task task) {
         return CreateChoiceTaskResponse.builder()
+                .id(task.getId())
                 .statement(task.getStatement())
                 .order(task.getOrder())
                 .courseId(task.getCourse().getId())
@@ -94,6 +95,7 @@ public class TaskService {
             return this.buildCreatedChoiceTask(task);
 
         return CreateTaskResponse.builder()
+                .id(task.getId())
                 .statement(task.getStatement())
                 .order(task.getOrder())
                 .courseId(task.getCourse().getId())
@@ -102,18 +104,20 @@ public class TaskService {
     }
 
     private boolean statementAlreadyExists(SampleTask requestTask, Course course) {
-        final var tasksStatements = taskRepository.findTasksStatementsByCourseId(course.getId());
-
+        final var tasksStatements = course.getTasks().stream().map(Task::getStatement).toList();
         return tasksStatements.stream().anyMatch(statement -> statement.equals(requestTask.getStatement()));
     }
 
     private boolean isOrderValid(Integer order, List<Task> otherTasksFromCourse) {
-        final var orderedOrders = otherTasksFromCourse.stream().map(Task::getOrder).sorted().toList();
-        return(order < orderedOrders.get(orderedOrders.size() - 1));
+        if (!otherTasksFromCourse.isEmpty()) {
+            final var orderedOrders = otherTasksFromCourse.stream().map(Task::getOrder).sorted().toList();
+            final var largestValidOrder = orderedOrders.get(orderedOrders.size() - 1) + 1;
+            return(order <= largestValidOrder);
+        }
+        return order == 1;
     }
 
     private Task saveTask(Task requestTask, List<Task> otherTasksFromCourse) {
-
         if (otherTasksFromCourse.isEmpty())
             return taskRepository.save(requestTask);
 
@@ -124,12 +128,15 @@ public class TaskService {
         if (!repeatedOrder)
             return taskRepository.save(requestTask);
 
-        final var changedTasks = otherTasksFromCourse.stream()
+        final var updatedTasks = otherTasksFromCourse.stream()
                 .filter(task -> task.getOrder() >= requestTask.getOrder())
                 .map(Task::increaseOrder)
                 .toList();
+
         final var savedTask = taskRepository.save(requestTask);
-        taskRepository.saveAll(changedTasks);
+
+        taskRepository.saveAll(updatedTasks);
+
         return savedTask;
     }
 }

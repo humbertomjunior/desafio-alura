@@ -13,7 +13,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "Task")
-@ToString
 public class Task {
 
     @Id

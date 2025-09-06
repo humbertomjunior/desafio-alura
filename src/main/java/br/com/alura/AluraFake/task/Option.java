@@ -24,7 +24,6 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "TaskOption")
-@ToString
 public class Option {
 
     @Id

@@ -3,10 +3,10 @@ package br.com.alura.AluraFake.course;
 import br.com.alura.AluraFake.task.Task;
 import br.com.alura.AluraFake.task.TaskType;
 import br.com.alura.AluraFake.user.UserRepository;
-import br.com.alura.AluraFake.util.CourseMissesTaskTypeException;
-import br.com.alura.AluraFake.util.CourseTasksOrdersNotInSequenceException;
-import br.com.alura.AluraFake.util.NotFoundException;
-import br.com.alura.AluraFake.util.UserIsNotInstructorException;
+import br.com.alura.AluraFake.util.exception.CourseMissesTaskTypeException;
+import br.com.alura.AluraFake.util.exception.CourseTasksOrdersNotInSequenceException;
+import br.com.alura.AluraFake.util.exception.NotFoundException;
+import br.com.alura.AluraFake.util.exception.UserIsNotInstructorException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,7 +1,9 @@
 package br.com.alura.AluraFake.user;
 
+import br.com.alura.AluraFake.course.CourseService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,6 +27,9 @@ class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private CourseService courseService;
 
     @Test
     void newUser__should_return_bad_request_when_email_is_blank() throws Exception {

@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NoStatementAsOption {
-    String message();
+    String message() default "";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
