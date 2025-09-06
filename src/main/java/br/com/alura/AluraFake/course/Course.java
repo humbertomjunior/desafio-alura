@@ -26,6 +26,7 @@ public class Course {
     private String title;
     private String description;
     @ManyToOne
+    @Setter(AccessLevel.PROTECTED)
     private User instructor;
 
     @Enumerated(EnumType.STRING)
@@ -33,6 +34,7 @@ public class Course {
     private LocalDateTime publishedAt;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "course")
+    @Setter(AccessLevel.PROTECTED)
     private List<Task> tasks = new ArrayList<>();
 
     @Deprecated
@@ -49,9 +51,5 @@ public class Course {
     public void setAsPublished() {
         this.status = Status.PUBLISHED;
         this.publishedAt = LocalDateTime.now();
-    }
-
-    protected void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
     }
 }

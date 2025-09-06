@@ -5,6 +5,8 @@ import br.com.alura.AluraFake.user.User;
 import br.com.alura.AluraFake.user.UserTestUtils;
 
 import java.awt.event.WindowStateListener;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class CourseTestUtils {
@@ -37,6 +39,16 @@ public class CourseTestUtils {
         setCourseId(course, 1L);
         setTasks(course, tasks);
         return course;
+    }
+
+    public static CourseAndTaskListItem createMockCourseAndTaskListItem(String title, Status status, LocalDateTime publishedAt, Long taskQuantity) {
+        return CourseAndTaskListItem.builder()
+                .id(1L)
+                .title(title)
+                .status(status)
+                .publishedAt(publishedAt)
+                .taskQuantity(taskQuantity)
+                .build();
     }
 
 //    public static Course createMockedCourse(User instructor) {

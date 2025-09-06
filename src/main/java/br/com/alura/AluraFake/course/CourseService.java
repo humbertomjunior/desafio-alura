@@ -36,7 +36,6 @@ public class CourseService {
         if (!isThereAtLeastOneOfEachTaskType(course))
             throw new CourseMissesTaskTypeException("Conter ao menos uma atividade de cada tipo.", "task.type");
 
-
         course.setAsPublished();
         courseRepository.save(course);
     }

@@ -14,6 +14,7 @@ import br.com.alura.AluraFake.util.exception.NotFoundException;
 import br.com.alura.AluraFake.util.exception.TaskOrderOutOfSequenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ public class TaskService {
         this.courseRepository = courseRepository;
     }
 
+    @Transactional
     public CreateTaskResponse createNewTask(SampleTask requestTask, TaskType type) {
 
         final var course = this.courseRepository.findById(requestTask.getCourseId())
