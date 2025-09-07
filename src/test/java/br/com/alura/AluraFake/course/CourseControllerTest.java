@@ -127,5 +127,15 @@ class CourseControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void publishCourse__should_publish() throws Exception {
+        Long courseId = 1L;
+
+        doNothing().when(courseService).publishCourse(anyLong());
+
+        mockMvc.perform(post("/course/%s/publish".formatted(courseId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isAccepted());
+    }
 
 }

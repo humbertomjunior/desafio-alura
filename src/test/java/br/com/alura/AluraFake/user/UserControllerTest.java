@@ -1,6 +1,8 @@
 package br.com.alura.AluraFake.user;
 
+import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseService;
+import br.com.alura.AluraFake.course.CourseTestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -11,7 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.List;
 
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -104,6 +108,26 @@ class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("User 1"))
                 .andExpect(jsonPath("$[1].name").value("User 2"));
+    }
+
+    @Test
+    void getCoursesByInstructorId__should_return_courses() throws Exception {
+        User paulo = new User("Paulo", "paulo@alua.com.br", Role.INSTRUCTOR);
+
+        Course java = new Course("Java", "Curso de java", paulo);
+        Course hibernate = new Course("Hibernate", "Curso de hibernate", paulo);
+        Course spring = new Course("Spring", "Curso de spring", paulo);
+
+        UserTestUtils.setId(paulo, 1L);
+
+        final var coursesAndTasks = CourseTestUtils.createMockCoursesAndTasksListItem(List.of(java, hibernate, spring));
+
+        doReturn(coursesAndTasks).when(courseService).getCoursesByInstructorId(paulo.getId());
+
+        final var resultActions = mockMvc.perform(get("/instructor/%s/courses".formatted(paulo.getId()))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].title").value("Java"))
+                .andExpect(status().isOk());
     }
 
 }

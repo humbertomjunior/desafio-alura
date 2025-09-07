@@ -7,6 +7,7 @@ import br.com.alura.AluraFake.user.UserTestUtils;
 import java.awt.event.WindowStateListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CourseTestUtils {
@@ -51,11 +52,30 @@ public class CourseTestUtils {
                 .build();
     }
 
-//    public static Course createMockedCourse(User instructor) {
-//        if (instructor == null) instructor = UserTestUtils.createMockInstructor("Instrutor", "instrutor@email.com");
-//        final var course = new Course("Curso 1", "Curso mockado número 1", instructor);
-//        setCourseId(course, 1L);
-//        return course;
-//    }
+    public static CourseAndTaskListItem createMockCourseAndTaskListItem(Course course) {
+        final var taskQuantity = (long) course.getTasks().size();
+        return CourseAndTaskListItem.builder()
+                .id(course.getId())
+                .title(course.getTitle())
+                .status(course.getStatus())
+                .publishedAt(course.getPublishedAt())
+                .taskQuantity(taskQuantity)
+                .build();
+    }
+
+    public static List<CourseAndTaskListItem> createMockCoursesAndTasksListItem(List<Course> courses) {
+        List<CourseAndTaskListItem> mocks = new ArrayList<>();
+        courses.forEach(course -> {
+            final var taskQuantity = (long) course.getTasks().size();
+            mocks.add(CourseAndTaskListItem.builder()
+                    .id(course.getId())
+                    .title(course.getTitle())
+                    .status(course.getStatus())
+                    .publishedAt(course.getPublishedAt())
+                    .taskQuantity(taskQuantity)
+                    .build());
+        });
+        return mocks;
+    }
 
 }

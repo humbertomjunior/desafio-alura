@@ -50,7 +50,7 @@ public class TaskServiceTest {
 
         Course foundCourse = CourseTestUtils.createMockedCourse();
 
-        Task createdTask = TaskTestUtils.createMockedTask(TaskType.OPEN_TEXT, 1, "New open text task", foundCourse);
+        Task createdTask = TaskTestUtils.createMockedTask(1L, TaskType.OPEN_TEXT, 1, "New open text task", foundCourse);
 
         when(courseRepository.findById(task.getCourseId())).thenReturn(Optional.of(foundCourse));
         when(taskRepository.save(any())).thenReturn(createdTask);
@@ -85,7 +85,7 @@ public class TaskServiceTest {
 
         List<Option> options = OptionTestUtils.createMockedOptions(optionsQuantity, correctAnswers);
 
-        Task createdTask = TaskTestUtils.createMockedTask(taskType, 1, statement, foundCourse, options);
+        Task createdTask = TaskTestUtils.createMockedTask(1L, taskType, 1, statement, foundCourse, options);
 
         when(courseRepository.findById(task.getCourseId())).thenReturn(Optional.of(foundCourse));
         when(taskRepository.save(any())).thenReturn(createdTask);
@@ -127,7 +127,7 @@ public class TaskServiceTest {
 
         List<Option> options = OptionTestUtils.createMockedOptions(optionsQuantity, correctAnswers);
 
-        Task createdTask = TaskTestUtils.createMockedTask(taskType, 1, statement, foundCourse, options);
+        Task createdTask = TaskTestUtils.createMockedTask(1L, taskType, 1, statement, foundCourse, options);
 
         when(courseRepository.findById(task.getCourseId())).thenReturn(Optional.of(foundCourse));
         when(taskRepository.save(any())).thenReturn(createdTask);
@@ -168,13 +168,13 @@ public class TaskServiceTest {
 
         Course foundCourse = CourseTestUtils.createMockedCourse();
 
-        Task taskFromCourse = TaskTestUtils.createMockedTask(taskType, 1, taskFromCourseStatement, foundCourse);
+        Task taskFromCourse = TaskTestUtils.createMockedTask(1L, taskType, 1, taskFromCourseStatement, foundCourse);
 
         CourseTestUtils.setTasks(foundCourse, List.of(taskFromCourse));
 
         List<Option> options = OptionTestUtils.createMockedOptions(optionsQuantity, correctAnswers);
 
-        Task createdTask = TaskTestUtils.createMockedTask(taskType, 2, newTaskStatement, foundCourse, options);
+        Task createdTask = TaskTestUtils.createMockedTask(1L, taskType, 2, newTaskStatement, foundCourse, options);
 
         when(courseRepository.findById(task.getCourseId())).thenReturn(Optional.of(foundCourse));
         when(taskRepository.save(any())).thenReturn(createdTask);
@@ -218,14 +218,14 @@ public class TaskServiceTest {
         CourseTestUtils.setTasks(
                 foundCourse,
                 List.of(
-                        TaskTestUtils.createMockedTask(taskType, 1, taskFromCourseStatement.concat(" 1"), foundCourse),
-                        TaskTestUtils.createMockedTask(taskType, 2, taskFromCourseStatement.concat(" 2"), foundCourse),
-                        TaskTestUtils.createMockedTask(taskType, 3, taskFromCourseStatement.concat(" 3"), foundCourse)
+                        TaskTestUtils.createMockedTask(1L, taskType, 1, taskFromCourseStatement.concat(" 1"), foundCourse),
+                        TaskTestUtils.createMockedTask(2L, taskType, 2, taskFromCourseStatement.concat(" 2"), foundCourse),
+                        TaskTestUtils.createMockedTask(3L, taskType, 3, taskFromCourseStatement.concat(" 3"), foundCourse)
                 ));
 
         List<Option> options = OptionTestUtils.createMockedOptions(optionsQuantity, correctAnswers);
 
-        Task createdTask = TaskTestUtils.createMockedTask(taskType, 1, newTaskStatement, foundCourse, options);
+        Task createdTask = TaskTestUtils.createMockedTask(1L, taskType, 1, newTaskStatement, foundCourse, options);
 
         when(courseRepository.findById(task.getCourseId())).thenReturn(Optional.of(foundCourse));
         when(taskRepository.save(any())).thenReturn(createdTask);
@@ -287,7 +287,7 @@ public class TaskServiceTest {
 
         Course foundCourse = CourseTestUtils.createMockedCourse();
 
-        Task taskFromCourse = TaskTestUtils.createMockedTask(taskType, 1, statement, foundCourse);
+        Task taskFromCourse = TaskTestUtils.createMockedTask(1L, taskType, 1, statement, foundCourse);
 
         CourseTestUtils.setTasks(foundCourse, List.of(taskFromCourse));
 
@@ -315,7 +315,7 @@ public class TaskServiceTest {
 
         Course foundCourse = CourseTestUtils.createMockedCourse();
 
-        Task taskFromCourse = TaskTestUtils.createMockedTask(taskType, 1, statement, foundCourse);
+        Task taskFromCourse = TaskTestUtils.createMockedTask(1L, taskType, 1, statement, foundCourse);
 
         CourseTestUtils.setTasks(foundCourse, List.of(taskFromCourse));
 

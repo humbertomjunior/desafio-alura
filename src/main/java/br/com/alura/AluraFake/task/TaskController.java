@@ -18,12 +18,12 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-
-
     @Transactional
     @PostMapping("/task/new/multiplechoice")
-    public ResponseEntity createMultipleChoiceTask(@RequestBody @Valid MultipleChoiceTask multipleChoiceTask) {
-        return ResponseEntity.status(201).body(this.taskService.createNewTask(multipleChoiceTask, TaskType.MULTIPLE_CHOICE));
+    public ResponseEntity<CreateTaskResponse> createMultipleChoiceTask(@RequestBody @Valid MultipleChoiceTask multipleChoiceTask) {
+        final var response = ResponseEntity.status(201).body(this.taskService.createNewTask(multipleChoiceTask, TaskType.MULTIPLE_CHOICE));
+        System.out.printf("Response: %s%n", response.getBody());
+        return response;
     }
 
     @Transactional

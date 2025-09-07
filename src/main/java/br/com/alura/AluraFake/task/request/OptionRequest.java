@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 @AllArgsConstructor
@@ -17,6 +19,7 @@ import org.hibernate.validator.constraints.Length;
 public class OptionRequest {
 
     @Length(min = 4, max = 80, message = "As alternativas devem ter no mínimo 4 e no máximo 80 caracteres.")
+    @Setter(AccessLevel.PROTECTED)
     private String option;
 
     @JsonProperty("isCorrect")
