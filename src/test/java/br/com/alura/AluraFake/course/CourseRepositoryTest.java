@@ -5,6 +5,7 @@ import br.com.alura.AluraFake.task.Task;
 import br.com.alura.AluraFake.task.TaskTestUtils;
 import br.com.alura.AluraFake.task.TaskType;
 import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.user.UserRepository;
 import br.com.alura.AluraFake.user.UserTestUtils;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
@@ -27,15 +28,18 @@ class CourseRepositoryTest {
     private CourseRepository courseRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private EntityManager entityManager;
 
     @Test
     void findById__should_return_course() {
 
         User instructor = UserTestUtils.createMockInstructor("Humberto", "Humberto@email.com");
-        UserTestUtils.setId(instructor, 1L);
+        User savedInstructor = userRepository.save(instructor);
 
-        Course course = new Course("Spring Boot", "Curso Zero to Hero Spring Boot", instructor);
+        Course course = new Course("Spring Boot", "Curso Zero to Hero Spring Boot", savedInstructor);
 
         Course savedCourse = courseRepository.save(course);
 
@@ -53,11 +57,10 @@ class CourseRepositoryTest {
         final var courseTitle = "Spring Boot";
         final var courseDescription = "Curso Zero to Hero Spring Boot";
 
-
         User instructor = UserTestUtils.createMockInstructor("Humberto", "Humberto@email.com");
-        UserTestUtils.setId(instructor, 1L);
+        User savedInstructor = userRepository.save(instructor);
 
-        Course course = new Course(courseTitle, courseDescription, instructor);
+        Course course = new Course(courseTitle, courseDescription, savedInstructor);
 
         List<Task> tasks = List.of(
                 TaskTestUtils.createMockedTask(TaskType.MULTIPLE_CHOICE, 1, "Questão 1", course, OptionTestUtils.createMockedOptions(5, 3)),
