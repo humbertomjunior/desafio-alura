@@ -1,7 +1,6 @@
 package br.com.alura.AluraFake.util;
 
 import org.springframework.util.Assert;
-import org.springframework.validation.FieldError;
 
 public class ErrorDTO {
 

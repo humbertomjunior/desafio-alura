@@ -1,6 +1,5 @@
 package br.com.alura.AluraFake.task.request;
 
-import br.com.alura.AluraFake.validation.NoStatementAsOption;
 import br.com.alura.AluraFake.validation.NotRepeatableOptions;
 import br.com.alura.AluraFake.validation.NumberOfCorrectAnswers;
 import jakarta.validation.Valid;

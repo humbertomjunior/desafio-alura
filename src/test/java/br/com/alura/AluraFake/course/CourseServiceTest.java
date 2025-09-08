@@ -1,6 +1,5 @@
 package br.com.alura.AluraFake.course;
 
-import br.com.alura.AluraFake.task.Option;
 import br.com.alura.AluraFake.task.OptionTestUtils;
 import br.com.alura.AluraFake.task.TaskTestUtils;
 import br.com.alura.AluraFake.task.TaskType;
@@ -30,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
