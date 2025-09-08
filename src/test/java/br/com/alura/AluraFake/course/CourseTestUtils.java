@@ -4,8 +4,6 @@ import br.com.alura.AluraFake.task.Task;
 import br.com.alura.AluraFake.user.User;
 import br.com.alura.AluraFake.user.UserTestUtils;
 
-import java.awt.event.WindowStateListener;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
