@@ -4,13 +4,25 @@ import br.com.alura.AluraFake.course.Course;
 import br.com.alura.AluraFake.course.CourseService;
 import br.com.alura.AluraFake.course.CourseTestUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +33,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
+@AutoConfigureMockMvc
+@Import(UserControllerTest.SecurityConfigForTest.class)
+@ActiveProfiles("test")
 class UserControllerTest {
 
     @Autowired
@@ -34,6 +49,17 @@ class UserControllerTest {
 
     @MockBean
     private CourseService courseService;
+
+    @Autowired
+    private WebApplicationContext context;
+
+    @BeforeEach
+    public void setup() {
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(SecurityMockMvcConfigurers.springSecurity())
+                .build();
+    }
 
     @Test
     void newUser__should_return_bad_request_when_email_is_blank() throws Exception {
@@ -128,6 +154,17 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].title").value("Java"))
                 .andExpect(status().isOk());
+    }
+
+    @TestConfiguration
+    public static class SecurityConfigForTest {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            return http
+                    .csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                    .build();
+        }
     }
 
 }

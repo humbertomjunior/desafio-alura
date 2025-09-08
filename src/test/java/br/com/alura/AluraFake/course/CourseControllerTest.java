@@ -6,8 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
@@ -17,6 +24,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CourseController.class)
+@Import(CourseControllerTest.SecurityConfigForTest.class)
+@ActiveProfiles("test")
 class CourseControllerTest {
 
     @Autowired
@@ -136,6 +145,17 @@ class CourseControllerTest {
         mockMvc.perform(post("/course/%s/publish".formatted(courseId))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted());
+    }
+
+    @TestConfiguration
+    public static class SecurityConfigForTest {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+            return http
+                    .csrf(csrf -> csrf.disable())
+                    .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+                    .build();
+        }
     }
 
 }
